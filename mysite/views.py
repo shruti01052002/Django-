@@ -1,16 +1,19 @@
+import json
+import requests
 from django.shortcuts import render
-import requests, json
+
 from .models import Contact
-from django.views.generic import ListView
+
 
 def index(request):
     if request.method == 'POST':
         firstname = request.POST.get('fname')
         lastname = request.POST.get('lname')
-        r = requests.get('http://api.icndb.com/jokes/random?firstName='+ firstname+' &lastName='+ lastname)
+
+        r = requests.get('http://api.icndb.com/jokes/random?firstName=' + firstname + ' &lastName=' + lastname)
         json_data = json.loads(r.text)
         joke = json_data.get('value').get('joke')
-        context = {'joke' : joke}
+        context = {'joke': joke}
         return render(request, "mysite/index.html", context)
     else:
         firstname = 'Shruti'
@@ -19,9 +22,13 @@ def index(request):
         json_data = json.loads(r.text)
         joke = json_data.get('value').get('joke')
         context = {'joke': joke}
-        return render(request,"mysite/index.html")
+        return render(request, "mysite/index.html", context)
+
+
 def portfolio(request):
-    return render(request,"mysite/portfolio.html")
+    return render(request, "mysite/portfolio.html")
+
+
 def contact(request):
     if request.method == 'POST':
         email_r = request.POST.get('email')
@@ -30,8 +37,7 @@ def contact(request):
 
         c = Contact(email=email_r, subject=subject_r, message=message_r)
         c.save()
+
         return render(request, "mysite/thanks.html")
     else:
         return render(request, "mysite/contact.html")
-
-
